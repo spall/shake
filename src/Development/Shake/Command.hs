@@ -205,6 +205,7 @@ removeOptionFSATrace params@Params{..} call
         liftIO $ writeFile file "" -- ensures even if we fail before fsatrace opens the file, we can still read it
         params <- liftIO $ fsaParams file params
         res <- call params{opts = UserCommand (showCommandForUser2 prog args) : filter (not . isFSAOptions) opts}
+        liftIO $ copyFile file $ file <.> "save"
         fsaResBS <- liftIO $ parseFSA <$> BS.readFile file
         let fsaRes = map (fmap UTF8.toString) fsaResBS
         return $ flip map res $ \x -> case x of
